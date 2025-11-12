@@ -22,7 +22,6 @@ class DistributeurController extends Controller
         $this->distributeurService = $distributeurService;
     }
 
-    // POST /distributeur/depot
     public function depot(DepotRequest $request)
     {
         $user = Auth::user();
@@ -33,7 +32,6 @@ class DistributeurController extends Controller
         return $this->apiResponse(true, $result['data'], 'Dépôt effectué', 200);
     }
 
-    // POST /distributeur/retrait
     public function retrait(RetraitRequest $request)
     {
         $user = Auth::user();
@@ -41,7 +39,6 @@ class DistributeurController extends Controller
         if (!$result['success']) {
             return $this->apiResponse(false, null, $result['message'], 400);
         }
-        // Envoi notification SMS au client
         $notif = $result['notification'] ?? null;
         if ($notif) {
             SendRetraitNotificationJob::dispatch($notif['telephone'], $notif['montant'], $notif['numero_distributeur'], $notif['frais']);

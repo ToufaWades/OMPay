@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('telephone')->unique();
             $table->string('password');
             $table->enum('type', ['client', 'distributeur']);
-            $table->string('code_pin')->nullable();
+            // $table->string('code_pin')->nullable(); // Supprimé, le code PIN est uniquement dans comptes
             $table->rememberToken();
             $table->timestamps();
         });

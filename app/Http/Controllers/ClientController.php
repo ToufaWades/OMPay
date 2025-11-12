@@ -23,7 +23,6 @@ class ClientController extends Controller
         $this->clientService = $clientService;
     }
 
-    // POST /client/depot
     public function depot(DepotRequest $request)
     {
         $user = Auth::user();
@@ -45,7 +44,6 @@ class ClientController extends Controller
         return $this->apiResponse(true, $result['data'], 'Paiement effectué', 200);
     }
 
-    // POST /client/transfert
     public function transfert(TransfertRequest $request)
     {
         $user = Auth::user();
@@ -57,7 +55,6 @@ class ClientController extends Controller
         return $this->apiResponse(true, $result['data'], 'Transfert effectué', 200);
     }
 
-    // GET /client/solde
     public function solde()
     {
         $user = Auth::user();
@@ -68,7 +65,6 @@ class ClientController extends Controller
         return $this->apiResponse(true, $result['data'], 'Solde récupéré', 200);
     }
 
-    // GET /client/transactions
     public function transactions()
     {
         $user = Auth::user();
@@ -79,7 +75,6 @@ class ClientController extends Controller
         return $this->apiResponse(true, $result['data'], 'Historique récupéré', 200);
     }
 
-    // GET /client/profil
     public function profil()
     {
         $user = Auth::user();

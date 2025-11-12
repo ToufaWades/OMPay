@@ -36,7 +36,6 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    // POST /register
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
@@ -44,16 +43,13 @@ class AuthController extends Controller
         if (!$result['success']) {
             return $this->apiResponse(false, null, $result['message'], 400);
         }
-    // Envoi du code PIN par SMS (asynchrone)
     SendPinSmsJob::dispatch($result['user']['telephone'], $result['code_pin']);
     return $this->apiResponse(true, $result['user'], 'Inscription réussie, code PIN envoyé par SMS', 201);
     }
 
-    // POST /login
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        // Connexion distributeur : pas de code_pin exigé, validation gérée dans LoginRequest
         $result = $this->authService->login($data);
         if (!$result['success']) {
             return $this->apiResponse(false, null, $result['message'], 401);

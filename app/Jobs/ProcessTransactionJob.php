@@ -28,14 +28,12 @@ class ProcessTransactionJob implements ShouldQueue
         try {
             sleep(1);
 
-            // If transfert by numero: credit destinataire when exists
             if ($tx->type === 'transfert' && $tx->numero_destinataire) {
                 $destCompte = Compte::where('numero_compte', $tx->numero_destinataire)->first();
                 if ($destCompte) {
                     $destCompte->solde += $tx->montant;
                     $destCompte->save();
                 } else {
-                    // destinataire introuvable -> refund origin
                     $origin = $tx->compte;
                     $origin->solde += $tx->montant;
                     $origin->save();

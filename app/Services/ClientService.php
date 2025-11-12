@@ -67,7 +67,6 @@ class ClientService
                 'montant' => $transaction->montant,
                 'status' => $transaction->status,
                 'date_transaction' => $transaction->date_transaction,
-                'numero_paiement' => $transaction->code_marchand,
                 'telephone_client' => $user->telephone,
             ]
         ];
@@ -111,7 +110,6 @@ class ClientService
                 'montant' => $transaction->montant,
                 'status' => $transaction->status,
                 'date_transaction' => $transaction->date_transaction,
-                'numero_transfert' => $transaction->numero_destinataire,
                 'telephone_client' => $user->telephone,
             ]
         ];
@@ -147,8 +145,6 @@ class ClientService
                 'montant' => $t->montant,
                 'status' => $t->status,
                 'date_transaction' => $t->date_transaction,
-                'numero_paiement' => $t->code_marchand,
-                'numero_transfert' => $t->numero_destinataire,
                 'telephone_client' => optional($t->compte->user)->telephone,
             ];
         });

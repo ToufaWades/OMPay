@@ -7,7 +7,7 @@
   },
   "servers": [
     { "url": "http://localhost:8000/api/v1", "description": "Serveur local" },
-        { "url": "https://ompay.onrender.com/docs", "description": "Serveur Production" }
+        { "url": "https://ompay.onrender.com/docs", "description": "Serveur " }
 
   ],
   "tags": [
@@ -281,8 +281,6 @@
               "numero_distributeur": { "type": "string", "example": "+221771234567", "description": "Numéro du distributeur (pour retrait)" },
               "frais": { "type": "number", "example": 0, "description": "Frais appliqués (pour retrait)" },
               "telephone_client": { "type": "string", "example": "+221771112233", "description": "Numéro de téléphone du client" },
-              "numero_paiement": { "type": "string", "example": "MRC1234", "description": "Code du marchand (pour paiement)" },
-              "numero_transfert": { "type": "string", "example": "+221770112233", "description": "Numéro du destinataire (pour transfert)" },
               "code_distributeur": { "type": "string", "example": "+221771234567", "description": "Code du distributeur (pour retrait)" }
             }
           },
@@ -308,8 +306,6 @@
                 "numero_distributeur": { "type": "string", "example": "+221771234567" },
                 "frais": { "type": "number", "example": 0 },
                 "telephone_client": { "type": "string", "example": "+221771112233" },
-                "numero_paiement": { "type": "string", "example": "MRC1234" },
-                "numero_transfert": { "type": "string", "example": "+221770112233" },
                 "code_distributeur": { "type": "string", "example": "+221771234567" }
               }
             }

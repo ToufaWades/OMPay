@@ -12,8 +12,7 @@ class LoginRequest extends FormRequest
             'telephone' => 'required|string|exists:users,telephone',
             'password' => 'required|string',
         ];
-        // Si le type est client, code_pin requis
-        if ($this->input('type', null) === 'client' || $this->routeIs('client.*')) {
+        if ($this->input('type', null) === 'client') {
             $rules['code_pin'] = 'required|string';
         }
         return $rules;

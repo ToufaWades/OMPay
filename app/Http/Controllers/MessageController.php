@@ -14,7 +14,7 @@ class MessageController extends Controller
 
     function store(Request $request){
         $twilioSid = env('TWILIO_SID');
-        $twilioAuthToken = env('TWILIO_AUTH_TOKEN');
+        $twilioAuthToken = env('TWILIO_AUTH');
         $twilioNumber = env('TWILIO_NUMBER');
         
         $to = $request->phone;

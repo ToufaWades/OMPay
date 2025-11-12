@@ -10,10 +10,20 @@ class AuthService
 {
     public function register(array $data)
     {
+        // Formatage du numéro de téléphone au format +22177 ou +22178
+        $telephone = $data['telephone'];
+        if (preg_match('/^(77|78)\d{7}$/', $telephone)) {
+            $telephone = '+221' . $telephone;
+        }
+        // Si déjà au format international, on garde
+        elseif (!preg_match('/^\+2217[78]\d{7}$/', $telephone)) {
+            // Format incorrect, on peut lever une erreur ou corriger
+            $telephone = '+22177' . substr($telephone, -7); // fallback 77
+        }
         $userData = [
             'nom' => $data['nom'],
             'prenom' => $data['prenom'],
-            'telephone' => $data['telephone'],
+            'telephone' => $telephone,
             'password' => bcrypt($data['password']),
             'type' => $data['type'],
         ];
@@ -69,28 +79,28 @@ class AuthService
 
     public function login(array $data)
     {
-        $user = User::where('telephone', $data['telephone'])->first();
+        // Formatage du numéro de téléphone pour la recherche
+        $telephone = $data['telephone'];
+        if (preg_match('/^(77|78)\d{7}$/', $telephone)) {
+            $telephone = '+221' . $telephone;
+        }
+        $user = User::where('telephone', $telephone)->first();
 
         // Vérification téléphone + mot de passe
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return ['success' => false, 'message' => 'Identifiants invalides'];
         }
 
-        // Vérification code PIN pour client
         if ($user->type === 'client') {
             $compte = $user->compte;
-
             if (!$compte) {
                 return ['success' => false, 'message' => 'Aucun compte associé'];
             }
-
-            // ✅ Comparer toujours en string
             if (!isset($data['code_pin']) || (string)$compte->code_pin !== (string)$data['code_pin']) {
                 return ['success' => false, 'message' => 'Code PIN invalide'];
             }
         }
 
-        // ✅ Génération des tokens
         $token = $user->createToken('api-token')->plainTextToken;
         $refreshToken = bin2hex(random_bytes(32));
 

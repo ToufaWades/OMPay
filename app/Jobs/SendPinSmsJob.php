@@ -24,8 +24,11 @@ class SendPinSmsJob implements ShouldQueue
 
     public function handle()
     {
-        // Vérification du format international Orange Sénégal : +2217XXXXXXXX
-        if (!preg_match('/^\+2217\d{7}$/', $this->telephone)) {
+        $telephone = $this->telephone;
+        if (preg_match('/^(77|78)\d{7}$/', $telephone)) {
+            $telephone = '+221' . $telephone;
+        }
+        if (!preg_match('/^\+2217[78]\d{7}$/', $telephone)) {
             Log::error('Numéro de téléphone invalide pour SMS OMPay : ' . $this->telephone);
             return;
         }
@@ -33,7 +36,7 @@ class SendPinSmsJob implements ShouldQueue
         $token = config('services.twilio.token');
         $from = config('services.twilio.from');
         $client = new Client($sid, $token);
-        $client->messages->create($this->telephone, [
+        $client->messages->create($telephone, [
             'from' => $from,
             'body' => 'Votre code PIN OMPay : ' . $this->code_pin
         ]);
