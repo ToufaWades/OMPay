@@ -6,7 +6,9 @@
     "version": "1.0.0"
   },
   "servers": [
-    { "url": "http://localhost:8000/api/v1", "description": "Serveur local" }
+    { "url": "http://localhost:8000/api/v1", "description": "Serveur local" },
+        { "url": "https://ompay.onrender.com/docs", "description": "Serveur Production" }
+
   ],
   "tags": [
     { "name": "Authentification", "description": "Endpoints d'authentification" },
