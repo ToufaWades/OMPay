@@ -9,25 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up() {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->notNull();
-               $table->string('nom');
-            $table->string('prenom');
-            $table->string('telephone')->unique();
-             $table->string
-                ('pays')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
+    public function down() {
         Schema::dropIfExists('clients');
     }
 };

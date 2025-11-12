@@ -9,24 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up() {
         Schema::create('comptes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('numero_compte')->nullable()->unique(); 
-            $table->integer('solde');
-            $table->string('devise', 4)->default('FCFA');            
-            $table->string('code_pin', 6)->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('numero_compte')->unique();
+            $table->decimal('solde', 15, 2)->default(0);
+            $table->string('devise')->default('FCFA');
+            $table->string('qr_code');
+            $table->string('code_pin')->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
+    public function down() {
         Schema::dropIfExists('comptes');
     }
 };

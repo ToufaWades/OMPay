@@ -1,19 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DistributeurController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::prefix('v1')->group(function () {
+    // Authentification
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    // Client
+    Route::middleware(['auth:sanctum', 'role:client'])->group(function () {
+        Route::post('client/paiement', [ClientController::class, 'paiement']);
+        Route::post('client/transfert', [ClientController::class, 'transfert']);
+        Route::post('client/depot', [ClientController::class, 'depot']);
+        Route::get('client/solde', [ClientController::class, 'solde']);
+        Route::get('client/transactions', [ClientController::class, 'transactions']);
+        Route::get('client/profil', [ClientController::class, 'profil']);
+    });
+
+    // Distributeur
+    Route::middleware(['auth:sanctum', 'role:distributeur'])->group(function () {
+        Route::post('distributeur/depot', [DistributeurController::class, 'depot']);
+        Route::post('distributeur/retrait', [DistributeurController::class, 'retrait']);
+    });
 });

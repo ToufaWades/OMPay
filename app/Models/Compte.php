@@ -17,9 +17,9 @@ class Compte extends Model
         'solde',
         'devise',
         'code_pin',
+        'qr_code',
     ];
 
-    // 🔗 Relations
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -29,4 +29,5 @@ class Compte extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
 }

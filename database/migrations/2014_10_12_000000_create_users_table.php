@@ -9,22 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up() {
         Schema::create('users', function (Blueprint $table) {
-               $table->id();
-        $table->string('nom');
-        $table->string('prenom');
-        $table->string('telephone')->unique();
-        $table->string('password');
-        $table->enum('type', ['client', 'distributeur'])->default('client');
-        $table->timestamps();
+            $table->id();
+            $table->string('nom');
+            $table->string('prenom');
+            $table->string('telephone')->unique();
+            $table->string('password');
+            $table->enum('type', ['client', 'distributeur']);
+            $table->string('code_pin')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
         });
     }
-
-   
-    public function down(): void
-    {
+    public function down() {
         Schema::dropIfExists('users');
     }
 };
+  

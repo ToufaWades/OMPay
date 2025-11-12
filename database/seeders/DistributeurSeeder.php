@@ -49,6 +49,7 @@ class DistributeurSeeder extends Seeder
                 'numero_compte' => '+221' . rand(770000000, 789999999),
                 'solde' => rand(100000, 500000),
                 'devise' => 'FCFA',
+                'qr_code' => 'QRCODE' . rand(1000, 9999),
                 'code_pin' => rand(100000, 999999),
             ]);
 

@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 return [
 
@@ -13,6 +13,11 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+   'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_AUTH'),
+        'from' => env('TWILIO_NUMBER'),
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

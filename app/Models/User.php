@@ -51,9 +51,14 @@ class User extends Authenticatable
         return $this->hasOne(Client::class);
     }
 
-    public function comptes()
+       public function compte()
     {
-        return $this->hasMany(Compte::class);
+        return $this->hasOne(Compte::class);
     }
+
+    // public function refreshTokens()
+    // {
+    //     return $this->hasMany(RefreshToken::class);
+    // }
 
 }
