@@ -116,27 +116,26 @@ class CompteService {
         if ($compte->solde < $data['montant']) {
             return ['success' => false, 'message' => 'Solde insuffisant'];
         }
-            // Débit du compte (montant négatif)
-            $this->debit($compte, $data['montant']);
-            $montant = ($data['montant'] > 0 ? '+' : '-') . abs($data['montant']);
-            $transaction = \App\Models\Transaction::create([
-                'compte_id' => $compte->id,
-                'type' => 'paiement',
-                'montant' => $montant,
-                'code_marchand' => $data['code_marchand'] ?? null,
-                'status' => 'terminé',
-                'date_transaction' => now(),
-            ]);
-            return [
-                'success' => true,
-                'data' => [
-                    'id' => $transaction->id,
-                    'type' => $transaction->type,
-                        'montant' => ($transaction->montant > 0 ? '+' : '') . abs($transaction->montant),
-                    'status' => $transaction->status,
-                    'date_transaction' => $transaction->date_transaction,
-                ]
-            ];
+        // Débit du compte (montant négatif)
+        $this->debit($compte, $data['montant']);
+        $transaction = \App\Models\Transaction::create([
+            'compte_id' => $compte->id,
+            'type' => 'paiement',
+            'montant' => -abs($data['montant']),
+            'code_marchand' => $data['code_marchand'] ?? null,
+            'status' => 'terminé',
+            'date_transaction' => now(),
+        ]);
+        return [
+            'success' => true,
+            'data' => [
+                'id' => $transaction->id,
+                'type' => $transaction->type,
+                'montant' => $transaction->montant,
+                'status' => $transaction->status,
+                'date_transaction' => $transaction->date_transaction,
+            ]
+        ];
     }
 
     /**
@@ -153,50 +152,50 @@ class CompteService {
         }
         // Débit du compte source (montant négatif)
         $this->debit($compte, $data['montant']);
-            // Recherche du compte destinataire par téléphone
-            $destUserId = $this->getUserIdByTelephone($data['numero']);
-            if (!$destUserId) {
-                // Créer un nouvel utilisateur et compte destinataire si inexistant
-                $newUser = \App\Models\User::create([
-                    'nom' => 'Destinataire',
-                    'prenom' => '',
-                    'telephone' => $data['numero'],
-                    'password' => bcrypt('default123'),
-                    'type' => 'client',
-                ]);
-                $numeroCompte = 'CPT-' . strtoupper(substr($newUser->nom, 0, 3)) . rand(10000, 99999);
-                $destCompte = $this->compteRepo->create([
-                    'user_id' => $newUser->id,
-                    'numero_compte' => $numeroCompte,
-                    'solde' => 0,
-                    'devise' => 'FCFA',
-                    'code_pin' => null,
-                ]);
-            } else {
-                $destCompte = $this->compteRepo->findByUserId($destUserId);
-            }
-            // Crédit du compte destinataire (montant positif)
-            $this->credit($destCompte, $data['montant']);
-            $montant = ($data['montant'] > 0 ? '+' : '-') . abs($data['montant']);
-            $transaction = \App\Models\Transaction::create([
-                'compte_id' => $compte->id,
-                'type' => 'transfert',
-                'montant' => $montant,
-                'numero_destinataire' => $data['numero'],
-                'status' => 'terminé',
-                'date_transaction' => now(),
+        // Recherche du compte destinataire par téléphone
+        $destUserId = $this->getUserIdByTelephone($data['numero']);
+        if (!$destUserId) {
+            // Créer un nouvel utilisateur et compte destinataire si inexistant
+            $newUser = \App\Models\User::create([
+                'nom' => 'Destinataire',
+                'prenom' => '',
+                'telephone' => $data['numero'],
+                'password' => bcrypt('default123'),
+                'type' => 'client',
             ]);
-            return [
-                'success' => true,
-                'data' => [
-                    'id' => $transaction->id,
-                    'type' => $transaction->type,
-                        'montant' => ($transaction->montant > 0 ? '+' : '') . abs($transaction->montant),
-                    'status' => $transaction->status,
-                    'date_transaction' => $transaction->date_transaction,
-                    'numero_destinataire' => $data['numero'],
-                ]
-            ];
+            $numeroCompte = 'CPT-' . strtoupper(substr($newUser->nom, 0, 3)) . rand(10000, 99999);
+            $destCompte = $this->compteRepo->create([
+                'user_id' => $newUser->id,
+                'numero_compte' => $numeroCompte,
+                'solde' => 0,
+                'devise' => 'FCFA',
+                'code_pin' => null,
+            ]);
+        } else {
+            $destCompte = $this->compteRepo->findByUserId($destUserId);
+        }
+        // Crédit du compte destinataire (montant positif)
+        $this->credit($destCompte, $data['montant']);
+        // Transaction négative pour l'envoyeur uniquement
+        $transactionEnvoyeur = \App\Models\Transaction::create([
+            'compte_id' => $compte->id,
+            'type' => 'transfert',
+            'montant' => -abs($data['montant']),
+            'numero_destinataire' => $data['numero'],
+            'status' => 'terminé',
+            'date_transaction' => now(),
+        ]);
+        return [
+            'success' => true,
+            'data' => [
+                'id' => $transactionEnvoyeur->id,
+                'type' => $transactionEnvoyeur->type,
+                'montant' => ($transactionEnvoyeur->montant > 0 ? '+' : '') . $transactionEnvoyeur->montant,
+                'status' => $transactionEnvoyeur->status,
+                'date_transaction' => $transactionEnvoyeur->date_transaction,
+                'numero_destinataire' => $data['numero'],
+            ]
+        ];
     }
 
     private function getUserIdByTelephone($telephone)

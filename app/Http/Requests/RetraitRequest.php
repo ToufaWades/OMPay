@@ -14,6 +14,7 @@ class RetraitRequest extends FormRequest
     {
         return [
             'qr_code' => 'required|string',
-            'montant' => 'required|numeric|min:1'        ];
+            'montant' => 'required|numeric|min:1'        
+        ];
     }
 }
