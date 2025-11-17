@@ -2,22 +2,25 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CompteController;
 use App\Http\Controllers\DistributeurController;
 
 Route::prefix('v1')->group(function () {
     // Authentification
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+        Route::post('/auth/register', [AuthController::class, 'register']);
+        Route::post('/auth/login', [AuthController::class, 'login']);
+        Route::post('/auth/connexion', [AuthController::class, 'connexion']);
 
-    // Client
+    // Compte
     Route::middleware(['auth:sanctum', 'role:client'])->group(function () {
-        Route::post('client/paiement', [ClientController::class, 'paiement']);
-        Route::post('client/transfert', [ClientController::class, 'transfert']);
-        Route::post('client/depot', [ClientController::class, 'depot']);
-        Route::get('client/solde', [ClientController::class, 'solde']);
-        Route::get('client/transactions', [ClientController::class, 'transactions']);
-        Route::get('client/profil', [ClientController::class, 'profil']);
+    Route::post('comptes/paiement', [CompteController::class, 'paiement']);
+        Route::post('paiement-marchand', [CompteController::class, 'paiementMarchand']);
+    Route::post('comptes/transfert', [CompteController::class, 'transfert']);
+        Route::post('comptes/{id}/depot', [CompteController::class, 'depot']);
+        Route::get('comptes/{id}/solde', [CompteController::class, 'solde']);
+        Route::get('comptes/{id}/transactions', [CompteController::class, 'transactions']);
+    Route::get('comptes/profil', [CompteController::class, 'profil']);
+        Route::get('api/compte', [CompteController::class, 'compte']);
     });
 
     // Distributeur

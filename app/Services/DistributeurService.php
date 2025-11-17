@@ -20,11 +20,12 @@ class DistributeurService
         // Créditer le compte client
         $destCompte->solde += $data['montant'];
         $destCompte->save();
-        // Créer la transaction
+        // Créer la transaction (montant positif)
+        $montant = ($data['montant'] > 0 ? '+' : '-') . abs($data['montant']);
         $transaction = Transaction::create([
             'compte_id' => $destCompte->id,
             'type' => 'depot',
-            'montant' => $data['montant'],
+            'montant' => $montant,
             'code_distributeur' => $user->telephone,
             'status' => 'terminé',
             'date_transaction' => now(),
@@ -34,7 +35,7 @@ class DistributeurService
             'data' => [
                 'id' => $transaction->id,
                 'type' => $transaction->type,
-                'montant' => $transaction->montant,
+                'montant' => '+' . abs($transaction->montant),
                 'status' => $transaction->status,
                 'date_transaction' => $transaction->date_transaction,
             ]
@@ -56,11 +57,12 @@ class DistributeurService
         $solde_retiré = $data['montant'];
         $compte->solde -= $solde_retiré;
         $compte->save();
-        // Créer la transaction
+        // Créer la transaction (montant négatif)
+        $montant = ($solde_retiré > 0 ? '-' : '+') . abs($solde_retiré);
         $transaction = \App\Models\Transaction::create([
             'compte_id' => $compte->id,
             'type' => 'retrait',
-            'montant' => $solde_retiré,
+            'montant' => $montant,
             'code_distributeur' => $user->telephone,
             'status' => 'terminé',
             'date_transaction' => now(),
@@ -71,7 +73,7 @@ class DistributeurService
             'data' => [
                 'id' => $transaction->id,
                 'type' => $transaction->type,
-                'solde_retiré' => $solde_retiré,
+                'solde_retiré' => '-' . abs($solde_retiré),
                 'solde_restant' => $compte->solde,
                 'numero_distributeur' => $user->telephone,
                 'frais' => $frais,

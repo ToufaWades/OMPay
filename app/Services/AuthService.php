@@ -10,12 +10,10 @@ class AuthService
 {
     public function register(array $data)
     {
-        // Formatage du numéro de téléphone au format +22177 ou +22178
         $telephone = $data['telephone'];
         if (preg_match('/^(77|78)\d{7}$/', $telephone)) {
             $telephone = '+221' . $telephone;
         }
-        // Si déjà au format international, on garde
         elseif (!preg_match('/^\+2217[78]\d{7}$/', $telephone)) {
             // Format incorrect, on peut lever une erreur ou corriger
             $telephone = '+22177' . substr($telephone, -7); // fallback 77
@@ -26,6 +24,7 @@ class AuthService
             'telephone' => $telephone,
             'password' => bcrypt($data['password']),
             'type' => $data['type'],
+            'status' => 'inactif',
         ];
 
         // Création de l'utilisateur
@@ -91,14 +90,19 @@ class AuthService
             return ['success' => false, 'message' => 'Identifiants invalides'];
         }
 
-        if ($user->type === 'client') {
-            $compte = $user->compte;
-            if (!$compte) {
-                return ['success' => false, 'message' => 'Aucun compte associé'];
+        // Première connexion : activation via code PIN
+        if ($user->status === 'inactif') {
+            if ($user->type === 'client') {
+                $compte = $user->compte;
+                if (!$compte) {
+                    return ['success' => false, 'message' => 'Aucun compte associé'];
+                }
+                if (!isset($data['code_pin']) || (string)$compte->code_pin !== (string)$data['code_pin']) {
+                    return ['success' => false, 'message' => 'Code PIN invalide'];
+                }
             }
-            if (!isset($data['code_pin']) || (string)$compte->code_pin !== (string)$data['code_pin']) {
-                return ['success' => false, 'message' => 'Code PIN invalide'];
-            }
+            $user->status = 'activé';
+            $user->save();
         }
 
         $token = $user->createToken('api-token')->plainTextToken;
@@ -109,14 +113,8 @@ class AuthService
             'data' => [
                 'token' => $token,
                 'refresh_token' => $refreshToken,
-                'user' => [
-                    'id' => $user->id,
-                    'nom' => $user->nom,
-                    'prenom' => $user->prenom,
-                    'telephone' => $user->telephone,
-                    'type' => $user->type,
-                ],
             ],
+            'message' => 'Connexion effectué avec succès!'
         ];
     }
 }

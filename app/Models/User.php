@@ -21,11 +21,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-       'nom',
+        'nom',
         'prenom',
         'telephone',
         'password',
         'type',
+        'status',
     ];
 
     /**
@@ -46,10 +47,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function client()
-    {
-        return $this->hasOne(Client::class);
-    }
 
        public function compte()
     {
