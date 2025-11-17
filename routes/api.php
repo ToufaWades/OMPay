@@ -13,13 +13,13 @@ Route::prefix('v1')->group(function () {
 
     // Compte
     Route::middleware(['auth:sanctum', 'role:client'])->group(function () {
-    Route::post('comptes/paiement', [CompteController::class, 'paiement']);
+    Route::post('comptes/{id}/paiement', [CompteController::class, 'paiement']);
         Route::post('paiement-marchand', [CompteController::class, 'paiementMarchand']);
-    Route::post('comptes/transfert', [CompteController::class, 'transfert']);
+    Route::post('comptes/{id}/transfert', [CompteController::class, 'transfert']);
         Route::post('comptes/{id}/depot', [CompteController::class, 'depot']);
         Route::get('comptes/{id}/solde', [CompteController::class, 'solde']);
         Route::get('comptes/{id}/transactions', [CompteController::class, 'transactions']);
-    Route::get('comptes/profil', [CompteController::class, 'profil']);
+    Route::get('comptes/{id}/profil', [CompteController::class, 'profil']);
         Route::get('api/compte', [CompteController::class, 'compte']);
     });
 
