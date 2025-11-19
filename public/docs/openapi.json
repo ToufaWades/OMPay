@@ -7,7 +7,7 @@
   },
   "servers": [
     { "url": "http://localhost:8000/api/v1", "description": "Serveur local" },
-        { "url": "https://ompay.onrender.com/docs", "description": "Serveur " }
+        { "url": "https://ompay.onrender.com/api/v1", "description": "Serveur de production" }
 
   ],
   "tags": [
@@ -48,7 +48,8 @@
                   "type": "object",
                   "properties": {
                     "success": { "type": "boolean", "example": true },
-                    "message": { "type": "string", "example": "Compte créé avec succès!" }
+                    "message": { "type": "string", "example": "Compte créé avec succès!" },
+                    "code_pin": { "type": "string", "example": "1234", "description": "Code PIN généré pour les clients" }
                   }
                 }
               }
@@ -321,7 +322,7 @@
     }
   }
 },
-     "/api/compte": {
+     "/compte": {
       "get": {
         "tags": ["Compte"],
         "summary": "Récupère les informations du compte connecté",

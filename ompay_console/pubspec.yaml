@@ -1,0 +1,6 @@
+name: ompay_console
+version: 1.0.0
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+dependencies:
+  dio: ^5.3.2

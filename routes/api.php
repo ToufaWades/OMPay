@@ -20,7 +20,7 @@ Route::prefix('v1')->group(function () {
         Route::get('comptes/{id}/solde', [CompteController::class, 'solde']);
         Route::get('comptes/{id}/transactions', [CompteController::class, 'transactions']);
     Route::get('comptes/{id}/profil', [CompteController::class, 'profil']);
-        Route::get('api/compte', [CompteController::class, 'compte']);
+        Route::get('compte', [CompteController::class, 'compte']);
     });
 
     // Distributeur

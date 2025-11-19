@@ -12,6 +12,10 @@ namespace App\Http\Controllers;
  *     url="http://localhost:8000/api/v1",
  *     description="Serveur local"
  * )
+ * @OA\Server(
+ *     url="https://ompay.onrender.com/api/v1",
+ *     description="Serveur de production"
+ * )
  */
 
 use App\Http\Controllers\Controller;
@@ -68,7 +72,6 @@ class AuthController extends Controller
         if (!$user || !\Illuminate\Support\Facades\Hash::check($data['password'], $user->password)) {
             return $this->apiResponse(false, null, 'Identifiants invalides', 401);
         }
-        // Si c'est un distributeur, on active le compte directement
         if ($user->type === 'distributeur' && $user->status !== 'activé') {
             $user->status = 'activé';
             $user->save();
@@ -134,6 +137,11 @@ class AuthController extends Controller
             $result['user']['type'] === 'client'
         ) {
             SendPinSmsJob::dispatch($result['user']['telephone'], $result['code_pin']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Compte créé avec succès!',
+                'code_pin' => $result['code_pin']
+            ], 201);
         }
         return response()->json([
             'success' => true,
