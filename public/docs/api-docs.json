@@ -1,0 +1,1004 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "OMPay API",
+        "description": "Documentation de l'API OMPay (Orange Money Pay)",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1",
+            "description": "Serveur local"
+        },
+        {
+            "url": "https://ompay.onrender.com/api/v1",
+            "description": "Serveur de production"
+        }
+    ],
+    "paths": {
+        "/compte": {
+            "get": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Afficher les informations du compte connecté",
+                "operationId": "d25035bedc65bedc6212d189de192f12",
+                "responses": {
+                    "200": {
+                        "description": "Informations du compte",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "Fall"
+                                                },
+                                                "prenom": {
+                                                    "type": "string",
+                                                    "example": "Awa"
+                                                },
+                                                "telephone": {
+                                                    "type": "string",
+                                                    "example": "+221771234567"
+                                                },
+                                                "numero_compte": {
+                                                    "type": "string",
+                                                    "example": "CPT-FAL12345"
+                                                },
+                                                "solde": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                },
+                                                "devise": {
+                                                    "type": "string",
+                                                    "example": "FCFA"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Créer un compte (client ou distributeur)",
+                "description": "Permet de créer un compte utilisateur avec un numéro de compte unique.",
+                "operationId": "fa582ec93e40adb9cd26524cc530d65b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "telephone",
+                                    "password",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Fall"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "Awa"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "+221771234567"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "client",
+                                            "distributeur"
+                                        ],
+                                        "example": "client"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Compte créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Compte créé avec succès"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "Fall"
+                                                },
+                                                "prenom": {
+                                                    "type": "string",
+                                                    "example": "Awa"
+                                                },
+                                                "telephone": {
+                                                    "type": "string",
+                                                    "example": "+221771234567"
+                                                },
+                                                "numero_compte": {
+                                                    "type": "string",
+                                                    "example": "CPT-FAL12345"
+                                                },
+                                                "solde": {
+                                                    "type": "number",
+                                                    "example": 0
+                                                },
+                                                "devise": {
+                                                    "type": "string",
+                                                    "example": "FCFA"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de validation"
+                    },
+                    "500": {
+                        "description": "Erreur serveur"
+                    }
+                }
+            }
+        },
+        "/compte/solde": {
+            "get": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Afficher le solde du compte connecté",
+                "operationId": "53e6946c2ae2276b7f1e9b11d256d028",
+                "responses": {
+                    "200": {
+                        "description": "Solde du compte",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "solde": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                },
+                                                "devise": {
+                                                    "type": "string",
+                                                    "example": "FCFA"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/compte/history": {
+            "get": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Lister les transactions du compte connecté",
+                "operationId": "c21e7234d29d887e3df70903ed0a9324",
+                "responses": {
+                    "200": {
+                        "description": "Historique des transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "transfert"
+                                                    },
+                                                    "montant": {
+                                                        "type": "number",
+                                                        "example": 1500
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "terminé"
+                                                    },
+                                                    "date_transaction": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-11-10T14:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/transaction": {
+            "post": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Effectuer un transfert ou un paiement",
+                "operationId": "1a1c12e2300cb5c01edceb016d666fbc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type",
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "transfert",
+                                            "paiement"
+                                        ]
+                                    },
+                                    "numero_destinataire": {
+                                        "type": "string",
+                                        "example": "+221770112233"
+                                    },
+                                    "code_marchand": {
+                                        "type": "string",
+                                        "example": "MRC1234"
+                                    },
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 1000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction effectuée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transfert réussi"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "transfert"
+                                                },
+                                                "montant": {
+                                                    "type": "number",
+                                                    "example": 2000
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "terminé"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de validation ou solde insuffisant"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/connexion": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Connexion utilisateur sans code PIN (compte déjà activé)",
+                "operationId": "e76ae49b81740147572539cd72ad43c0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "telephone",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "+221771428150"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Connexion effectué avec succès!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOi..."
+                                        },
+                                        "refresh_token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOi..."
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Connexion effectué avec succès!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Identifiants invalides"
+                    },
+                    "403": {
+                        "description": "Compte non activé"
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Inscription utilisateur (client/distributeur)",
+                "operationId": "ed42f392010c301892e640067141676e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "telephone",
+                                    "password",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Fall"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "Awa"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "+221771234567"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "client",
+                                            "distributeur"
+                                        ],
+                                        "example": "client"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Compte créé avec succès!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Compte créé avec succès!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de validation"
+                    }
+                }
+            }
+        },
+        "/comptes/{id}/depot": {
+            "post": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Effectuer un dépôt sur un compte",
+                "operationId": "depotCompte",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du compte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 1000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dépôt effectué"
+                    }
+                }
+            }
+        },
+        "/paiement-marchand": {
+            "post": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Effectuer un paiement vers un marchand (par code_marchand ou téléphone)",
+                "operationId": "paiementMarchand",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 1000
+                                    },
+                                    "code_marchand": {
+                                        "type": "string",
+                                        "example": "MRC1234"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "+221771428150"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paiement marchand effectué"
+                    }
+                }
+            }
+        },
+        "/comptes/{id}/transfert": {
+            "post": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Effectuer un transfert entre comptes",
+                "operationId": "transfertCompte",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du compte source",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 1000
+                                    },
+                                    "numero": {
+                                        "type": "string",
+                                        "example": "+221770112233"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transfert effectué"
+                    }
+                }
+            }
+        },
+        "/comptes/{id}/solde": {
+            "get": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Afficher le solde d'un compte",
+                "operationId": "soldeCompte",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du compte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solde récupéré"
+                    }
+                }
+            }
+        },
+        "/comptes/{id}/transactions": {
+            "get": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Afficher les transactions d'un compte",
+                "operationId": "transactionsCompte",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du compte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Historique récupéré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "transactions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "pagination": {
+                                                    "properties": {
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_pages": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "total_items": {
+                                                            "type": "integer",
+                                                            "example": 25
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Historique récupéré"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/comptes/{id}/profil": {
+            "get": {
+                "tags": [
+                    "Compte"
+                ],
+                "summary": "Afficher le profil d'un compte",
+                "operationId": "profilCompte",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du compte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profil récupéré"
+                    }
+                }
+            }
+        },
+        "/distributeur/depot": {
+            "post": {
+                "tags": [
+                    "Distributeur"
+                ],
+                "summary": "Effectuer un dépôt sur le compte d'un client (montant positif)",
+                "operationId": "depotDistributeur",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "numero",
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "numero": {
+                                        "type": "string",
+                                        "example": "+221771428150"
+                                    },
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 3000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dépôt effectué",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "depot"
+                                                },
+                                                "montant": {
+                                                    "description": "Montant positif",
+                                                    "type": "number",
+                                                    "example": 3000
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "terminé"
+                                                },
+                                                "date_transaction": {
+                                                    "type": "string",
+                                                    "example": "2025-11-16 12:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dépôt effectué"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/distributeur/retrait": {
+            "post": {
+                "tags": [
+                    "Distributeur"
+                ],
+                "summary": "Effectuer un retrait sur le compte d'un client (montant négatif)",
+                "operationId": "retraitDistributeur",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "qr_code",
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "qr_code": {
+                                        "type": "string",
+                                        "example": "QRCODE5442"
+                                    },
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 3000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retrait effectué",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "retrait"
+                                                },
+                                                "solde_retiré": {
+                                                    "description": "Montant retiré (positif dans la réponse, négatif en base)",
+                                                    "type": "number",
+                                                    "example": 3000
+                                                },
+                                                "solde_restant": {
+                                                    "type": "number",
+                                                    "example": 12000
+                                                },
+                                                "numero_distributeur": {
+                                                    "type": "string",
+                                                    "example": "+221770000001"
+                                                },
+                                                "frais": {
+                                                    "type": "number",
+                                                    "example": 0
+                                                },
+                                                "telephone_client": {
+                                                    "type": "string",
+                                                    "example": "+221771428150"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "terminé"
+                                                },
+                                                "date_transaction": {
+                                                    "type": "string",
+                                                    "example": "2025-11-16 12:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Retrait effectué"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Compte",
+            "description": "Opérations liées aux comptes"
+        },
+        {
+            "name": "Transaction",
+            "description": "Transaction"
+        },
+        {
+            "name": "Authentification",
+            "description": "Authentification"
+        },
+        {
+            "name": "Distributeur",
+            "description": "Distributeur"
+        }
+    ]
+}

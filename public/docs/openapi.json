@@ -1,0 +1,589 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OMPay API",
+    "description": "Documentation de l'API OMPay (9 endpoints)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:8000/api/v1", "description": "Serveur local" },
+        { "url": "https://ompay.onrender.com/api/v1", "description": "Serveur de production" }
+
+  ],
+  "tags": [
+    { "name": "Authentification", "description": "Endpoints d'authentification" },
+  { "name": "Compte", "description": "Endpoints compte" },
+    { "name": "Distributeur", "description": "Endpoints distributeur" }
+  ],
+  "paths": {
+      "/auth/register": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Inscription utilisateur (client/distributeur)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nom", "prenom", "telephone", "password", "password_confirmation", "type"],
+                "properties": {
+                  "nom": { "type": "string", "example": "Fall" },
+                  "prenom": { "type": "string", "example": "Awa" },
+                  "telephone": { "type": "string", "example": "+221776437569" },
+                  "password": { "type": "string", "example": "123456" },
+                  "password_confirmation": { "type": "string", "example": "123456" },
+                  "type": { "type": "string", "enum": ["client", "distributeur"], "example": "client" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Compte créé avec succès!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Compte créé avec succès!" },
+                    "code_pin": { "type": "string", "example": "1234", "description": "Code PIN généré pour les clients" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Erreur de validation" }
+        }
+      }
+    },
+   "/auth/login": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Connexion utilisateur (activation via code PIN)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["telephone", "password", "code_pin"],
+                "properties": {
+                  "telephone": { "type": "string", "example": "+221771112233" },
+                  "password": { "type": "string", "example": "123456" },
+                  "code_pin": { "type": "string", "example": "1234" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion effectué avec succès!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string", "example": "eyJhbGciOi..." },
+                    "refresh_token": { "type": "string", "example": "eyJhbGciOi..." },
+                    "message": { "type": "string", "example": "Connexion effectué avec succès!" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Identifiants invalides" }
+        }
+      }
+    },
+    "/auth/connexion": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Connexion utilisateur (sans code PIN, compte déjà activé)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["telephone", "password"],
+                "properties": {
+                  "telephone": { "type": "string", "example": "+221771112233" },
+                  "password": { "type": "string", "example": "123456" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion effectué avec succès!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string", "example": "eyJhbGciOi..." },
+                    "refresh_token": { "type": "string", "example": "eyJhbGciOi..." },
+                    "message": { "type": "string", "example": "Connexion effectué avec succès!" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Identifiants invalides" },
+          "403": { "description": "Compte non activé" }
+        }
+      }
+    },
+  "/comptes/{id}/paiement": {
+  "post": {
+    "tags": ["Compte"],
+    "summary": "Effectuer un paiement",
+    "security": [{ "bearerAuth": [] }],
+    "parameters": [],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["code_marchand", "montant"],
+            "properties": {
+              "code_marchand": { "type": "string", "example": "MRC1234" },
+              "montant": { "type": "number", "example": 1000 }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Paiement effectué",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean", "example": true },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 8 },
+                    "type": { "type": "string", "example": "paiement" },
+                    "montant": { "type": "number", "example": -1000 },
+                    "status": { "type": "string", "example": "terminé" },
+                    "date_transaction": { "type": "string", "example": "2025-11-13T10:59:33.000000Z" },
+                    "numero_a_payer": { "type": "string", "example": "+221771428150" }
+                  }
+                },
+                "message": { "type": "string", "example": "Paiement effectué" }
+              }
+            }
+          }
+        }
+      },
+      "400": { "description": "Erreur de validation ou solde insuffisant" }
+    }
+  }
+},
+  "/comptes/{id}/transfert": {
+  "post": {
+    "tags": ["Compte"],
+    "summary": "Effectuer un transfert",
+    "security": [{ "bearerAuth": [] }],
+    "parameters": [],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["numero", "montant"],
+            "properties": {
+              "numero": { "type": "string", "example": "+221770000000" },
+              "montant": { "type": "number", "example": 2000 }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Transfert effectué",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean", "example": true },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 1 },
+                    "type": { "type": "string", "example": "transfert" },
+                    "montant": { "type": "number", "example": -2000 },
+                    "status": { "type": "string", "example": "terminé" },
+                    "date_transaction": { "type": "string", "example": "2025-11-12T16:50:43.000000Z" },
+                    "numero_destinataire": { "type": "string", "example": "+221771428150" }
+                  }
+                },
+                "message": { "type": "string", "example": "Transfert effectué" }
+              }
+            }
+          }
+        }
+      },
+      "400": { "description": "Erreur de validation ou solde insuffisant" }
+    }
+  }
+},
+  "/comptes/{id}/solde": {
+      "get": {
+  "tags": ["Compte"],
+        "summary": "Afficher le solde du compte connecté",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du compte",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Solde du compte", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SoldeResponse" } } } },
+          "401": { "description": "Non autorisé" }
+        }
+      }
+    },
+  "/comptes/{id}/transactions": {
+  "get": {
+    "tags": ["Compte"],
+    "summary": "Lister les transactions du compte connecté (pagination sans liens)",
+    "security": [{ "bearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "description": "ID du compte",
+        "required": true,
+        "schema": { "type": "integer" }
+      },
+      {
+        "name": "page",
+        "in": "query",
+        "description": "Numéro de la page",
+        "required": false,
+        "schema": { "type": "integer", "default": 1 }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "description": "Nombre d'éléments par page",
+        "required": false,
+        "schema": { "type": "integer", "default": 10 }
+      }
+    ],
+                 
+                    "montant": { "type": "number", "example": -2000, "description": "Montant négatif pour le débiteur" },
+    "responses": {
+      "200": {
+        "description": "Historique des transactions avec pagination",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean", "example": true },
+                "data": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TransactionResponse" }
+                },
+                "pagination": {
+                  "type": "object",
+                  "properties": {
+                    "current_page": { "type": "integer", "example": 1 },
+                    "total_pages": { "type": "integer", "example": 5 },
+                    "per_page": { "type": "integer", "example": 10 },
+                    "total_items": { "type": "integer", "example": 50 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": { "description": "Non autorisé" }
+    }
+  }
+},
+     "/api/compte": {
+      "get": {
+        "tags": ["Compte"],
+        "summary": "Récupère les informations du compte connecté",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Informations du compte connecté",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "telephone": { "type": "string", "example": "+221771428150" }
+                          }
+                        },
+                        "compte": {
+                          "type": "object",
+                          "properties": {
+                            "solde": { "type": "number", "example": 25000 },
+                            "nom": { "type": "string", "example": "Compte Principal" },
+                            "qr_code": { "type": "string", "example": "QRCODE123" }
+                          }
+                        },
+                        "transactions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "success": { "type": "boolean", "example": true },
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "id": { "type": "integer", "example": 1 },
+                                  "type": { "type": "string", "example": "transfert" },
+                                  "montant": { "type": "number", "example": -2000 },
+                                  "status": { "type": "string", "example": "terminé" },
+                                  "date_transaction": { "type": "string", "example": "2025-11-12T16:50:43.000000Z" },
+                                  "numero_destinataire": { "type": "string", "example": "+221771428150" },
+                                  "numero_paiement": { "type": "string", "example": "+221771428150" }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Non autorisé" }
+        }
+      }
+    },
+  "/comptes/{id}/profil": {
+      "get": {
+  "tags": ["Compte"],
+        "summary": "Afficher les informations du profil du compte connecté",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [],
+        "responses": {
+          "200": { "description": "Profil utilisateur", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
+          "401": { "description": "Non autorisé" }
+        }
+      }
+    },
+    "/distributeur/depot": {
+      "post": {
+        "tags": ["Distributeur"],
+        "summary": "Effectuer un dépôt",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["numero", "montant"],
+                "properties": {
+                  "numero": { "type": "string", "example": "+221771234567" },
+                  "montant": { "type": "number", "example": 5000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Dépôt effectué", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "400": { "description": "Erreur de validation ou solde insuffisant" }
+        }
+      }
+    },
+    "/distributeur/retrait": {
+      "post": {
+        "tags": ["Distributeur"],
+        "summary": "Effectuer un retrait",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["qr_code", "montant", "code_validation"],
+                "properties": {
+                  "qr_code": { "type": "string", "example": "QRCODE123" },
+                  "montant": { "type": "number", "example": 3000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Retrait effectué avec succés, SMS envoyé au client", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "400": { "description": "Erreur de validation ou solde insuffisant" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 1 },
+              "nom": { "type": "string", "example": "Fall" },
+              "prenom": { "type": "string", "example": "Awa" },
+              "telephone": { "type": "string", "example": "+221771112233" },
+              "type": { "type": "string", "example": "client" }
+            }
+          },
+          "message": { "type": "string", "example": "Utilisateur créé avec succès" }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": { "type": "string", "example": "eyJhbGciOi..." },
+              "refresh_token": { "type": "string", "example": "eyJhbGciOi..." },
+              "user": { "$ref": "#/components/schemas/UserResponse/properties/data" }
+            }
+          },
+          "message": { "type": "string", "example": "Connexion réussie" }
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 12 },
+              "type": { "type": "string", "example": "transfert" },
+              "montant": { "type": "number", "example": 2000 },
+              "status": { "type": "string", "example": "terminé" },
+              "date_transaction": { "type": "string", "format": "date-time", "example": "2025-11-10T14:00:00Z" },
+              "solde_retiré": { "type": "number", "example": 1000, "description": "Montant retiré (pour retrait)" },
+              "solde_restant": { "type": "number", "example": 5000, "description": "Solde restant après opération" },
+              "numero_distributeur": { "type": "string", "example": "+221771234567", "description": "Numéro du distributeur (pour retrait)" },
+              "frais": { "type": "number", "example": 0, "description": "Frais appliqués (pour retrait)" },
+              "telephone_client": { "type": "string", "example": "+221771112233", "description": "Numéro de téléphone du client" },
+              "code_distributeur": { "type": "string", "example": "+221771234567", "description": "Code du distributeur (pour retrait)" }
+            }
+          },
+          "message": { "type": "string", "example": "Transaction réussie" }
+        }
+      },
+      "TransactionListResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer", "example": 12 },
+                "type": { "type": "string", "example": "transfert" },
+                "montant": { "type": "number", "example": 2000 },
+                "status": { "type": "string", "example": "terminé" },
+                "date_transaction": { "type": "string", "format": "date-time", "example": "2025-11-10T14:00:00Z" },
+                "solde_retiré": { "type": "number", "example": 1000 },
+                "solde_restant": { "type": "number", "example": 5000 },
+                "numero_distributeur": { "type": "string", "example": "+221771234567" },
+                "frais": { "type": "number", "example": 0 },
+                "telephone_client": { "type": "string", "example": "+221771112233" },
+                "code_distributeur": { "type": "string", "example": "+221771234567" }
+              }
+            }
+          },
+          "message": { "type": "string", "example": "Historique récupéré" }
+        }
+      },
+      "SoldeResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "solde": { "type": "number", "example": 50000 },
+              "prenom": { "type": "string", "example": "Awa" },
+              "qr_code": { "type": "string", "example": "QRCODE123" }
+            }
+          },
+          "message": { "type": "string", "example": "Solde récupéré" }
+        }
+      },
+      "CompteResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "properties": {
+                  "telephone": { "type": "string", "example": "+221771428150" }
+                }
+              },
+              "compte": {
+                "type": "object",
+                "properties": {
+                  "solde": { "type": "number", "example": 25000 },
+                  "nom": { "type": "string", "example": "Compte Principal" },
+                  "qr_code": { "type": "string", "example": "QRCODE123" }
+                }
+              },
+              "transactions": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/TransactionResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
