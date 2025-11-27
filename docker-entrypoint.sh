@@ -2,6 +2,12 @@
 
 # Basic runtime sanity checks for required DB envs
 echo "Starting docker-entrypoint.sh"
+
+# Ensure storage directories exist
+echo "Ensuring storage directories exist..."
+mkdir -p storage/framework/{cache,data,sessions,testing,views}
+mkdir -p storage/logs
+mkdir -p bootstrap/cache
 MISSING=0
 for v in DB_HOST DB_PORT DB_DATABASE DB_USERNAME; do
   eval val="\$$v"

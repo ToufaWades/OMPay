@@ -29,5 +29,5 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 USER laravel
 EXPOSE 8000
-
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
