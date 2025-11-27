@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:42479', 'http://localhost:3000', 'http://localhost:8080', 'https://ompay.onrender.com'],
+    'allowed_origins' => ['http://localhost:33203', 'http://localhost:42479', 'http://localhost:3000', 'http://localhost:8080', 'https://ompay.onrender.com'],
 
     'allowed_origins_patterns' => [],
 
