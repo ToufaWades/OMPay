@@ -1,13 +1,11 @@
 #!/bin/sh
-
 echo "Starting docker-entrypoint.sh"
 
 # Ensure storage & cache directories exist
 echo "Ensuring storage directories exist..."
-mkdir -p storage/framework/{cache,data,sessions,testing,views}
-mkdir -p storage/logs
-mkdir -p bootstrap/cache
-chown -R laravel:laravel storage bootstrap/cache
+mkdir -p storage/framework/{cache,data,sessions,testing,views} \
+    storage/logs bootstrap/cache
+
 chmod -R 775 storage bootstrap/cache
 
 # Check required DB envs
@@ -39,7 +37,7 @@ while ! pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME" >/dev/null 2>&1
     echo "Timeout waiting for DB after ${MAX_WAIT}s" >&2
     exit 1
   fi
-  echo "DB not ready — sleep 1 ( waited ${WAITED}s )"
+  echo "DB not ready — sleep 1 (waited ${WAITED}s)"
   sleep 1
   WAITED=$((WAITED+1))
 done
@@ -47,8 +45,6 @@ done
 echo "DB is ready — running migrations"
 php artisan route:clear || true
 php artisan config:clear || true
-php artisan cache:clear || true
-php artisan session:table --force || true
 php artisan migrate --force || true
 
 echo "Starting Laravel..."

@@ -6,6 +6,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-di
 
 FROM php:8.3-fpm-alpine
 
+# Install dependencies
 RUN apk add --no-cache postgresql-dev postgresql-client autoconf g++ make \
     && docker-php-ext-install pdo pdo_pgsql \
     && pecl install mongodb \
@@ -19,7 +20,7 @@ WORKDIR /var/www/html
 COPY --from=composer-build /app/vendor ./vendor
 COPY . .
 
-# Create necessary directories BEFORE changing user
+# Create storage & cache directories **before switching user**
 RUN mkdir -p storage/framework/{cache,data,sessions,testing,views} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
@@ -30,6 +31,6 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 8000
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 USER laravel
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
