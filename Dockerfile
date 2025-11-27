@@ -29,8 +29,7 @@ RUN mkdir -p storage/framework/{cache,data,sessions,testing,views} \
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER laravel
 EXPOSE 8000
-
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+USER laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

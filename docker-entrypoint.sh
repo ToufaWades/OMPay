@@ -7,6 +7,7 @@ echo "Ensuring storage directories exist..."
 mkdir -p storage/framework/{cache,data,sessions,testing,views}
 mkdir -p storage/logs
 mkdir -p bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 # Check required DB envs
 MISSING=0
