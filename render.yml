@@ -1,7 +1,8 @@
 services:
   - type: web
     name: ompay-backend
-    dockerfilePath: ./Dockerfile
+    rootDir: ompay-backend
+    dockerfilePath: ompay-backend/Dockerfile
     envVars:
       - key: APP_NAME
         value: OMPay
@@ -9,6 +10,8 @@ services:
         value: production
       - key: APP_KEY
         generateValue: true
+      - key: APP_DEBUG
+        value: false
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -36,6 +39,7 @@ services:
           type: pgsql
           name: ompay-db
           property: password
+
   - type: pgsql
     name: ompay-db
-    ipAllowList: []  # Add your IP or leave empty for Render's default
+    ipAllowList: []
