@@ -7,7 +7,7 @@
   },
   "servers": [
     { "url": "http://localhost:8000/api/v1", "description": "Serveur local" },
-        { "url": "https://ompay.onrender.com/api/v1", "description": "Serveur de production" }
+        { "url": "https://ompaye-5jg4.onrender.com/api/v1", "description": "Serveur de production" }
 
   ],
   "tags": [

@@ -11,7 +11,7 @@
             "description": "Serveur local"
         },
         {
-            "url": "https://ompay.onrender.com/api/v1",
+            "url": "https://https://ompaye-5jg4.onrender.com/api/v1",
             "description": "Serveur de production"
         }
     ],

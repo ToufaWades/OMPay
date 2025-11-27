@@ -48,6 +48,7 @@ echo "DB is ready — running migrations"
 php artisan route:clear || true
 php artisan config:clear || true
 php artisan cache:clear || true
+php artisan session:table --force || true
 php artisan migrate --force || true
 
 echo "Starting Laravel..."

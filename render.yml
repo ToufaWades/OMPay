@@ -12,6 +12,8 @@ services:
         generateValue: true
       - key: APP_DEBUG
         value: false
+      - key: SESSION_DRIVER
+        value: database
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST

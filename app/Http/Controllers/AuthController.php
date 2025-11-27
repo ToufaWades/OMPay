@@ -13,7 +13,7 @@ namespace App\Http\Controllers;
  *     description="Serveur local"
  * )
  * @OA\Server(
- *     url="https://ompay.onrender.com/api/v1",
+ *     url="https://ompaye-5jg4.onrender.com/api/v1",
  *     description="Serveur de production"
  * )
  */
