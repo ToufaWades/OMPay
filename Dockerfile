@@ -11,6 +11,7 @@ RUN apk add --no-cache postgresql-dev postgresql-client autoconf g++ make \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb
 
+# Add Laravel user
 RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
 
 WORKDIR /var/www/html
@@ -18,6 +19,7 @@ WORKDIR /var/www/html
 COPY --from=composer-build /app/vendor ./vendor
 COPY . .
 
+# Create necessary directories BEFORE changing user
 RUN mkdir -p storage/framework/{cache,data,sessions,testing,views} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
@@ -29,5 +31,6 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 USER laravel
 EXPOSE 8000
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
