@@ -24,3 +24,7 @@ Route::get('/docs', function () {
     }
     abort(404);
 });
+
+Route::get('/login', function () {
+    return response()->json(['message' => 'Unauthenticated.'], 401);
+})->name('login');
