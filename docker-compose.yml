@@ -28,7 +28,7 @@ services:
       POSTGRES_USER: ${LOCAL_DB_USERNAME:-laravel}
       POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:-password}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
