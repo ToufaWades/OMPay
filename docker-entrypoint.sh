@@ -50,5 +50,8 @@ php artisan migrate --force || true
 echo "Starting PHP-FPM..."
 php-fpm -D
 
+echo "Ensuring nginx temp directories..."
+mkdir -p /tmp/nginx/client_body
+
 echo "Starting nginx..."
 exec "$@"
