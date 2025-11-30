@@ -4,6 +4,8 @@ services:
     rootDir: ompay-backend
     dockerfilePath: ompay-backend/Dockerfile
     envVars:
+      - key: PORT
+        value: 80
       - key: APP_NAME
         value: OMPay
       - key: APP_ENV

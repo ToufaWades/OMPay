@@ -47,5 +47,8 @@ php artisan route:clear || true
 php artisan config:clear || true
 php artisan migrate --force || true
 
-echo "Starting Laravel..."
+echo "Starting PHP-FPM..."
+php-fpm -D
+
+echo "Starting nginx..."
 exec "$@"
