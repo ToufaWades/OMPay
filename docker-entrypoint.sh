@@ -4,9 +4,11 @@ echo "Starting docker-entrypoint.sh"
 # Ensure storage & cache directories exist
 echo "Ensuring storage directories exist..."
 mkdir -p storage/framework/{cache,data,sessions,testing,views} \
-    storage/logs bootstrap/cache
+    storage/logs bootstrap/cache \
+    storage/framework/cache/data
 
-chmod -R 775 storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache storage/logs
+chown -R laravel:laravel storage bootstrap/cache storage/logs
 
 # Check required DB envs
 MISSING=0
