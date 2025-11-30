@@ -27,9 +27,11 @@ RUN mkdir -p storage/framework/{cache,data,sessions,testing,views} \
     && chown -R laravel:laravel /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
+
 # Configure nginx
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir -p /var/cache/nginx && chown -R laravel:laravel /var/log/nginx /var/cache/nginx /run/nginx
+RUN mkdir -p /var/cache/nginx && chown -R laravel:laravel /var/log/nginx /var/cache/nginx /run/nginx \
+    && mkdir -p /tmp/nginx/client_body && chown -R laravel:laravel /tmp/nginx
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
