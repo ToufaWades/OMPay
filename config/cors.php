@@ -24,10 +24,10 @@ return [
     ],
 
     'allowed_origins_patterns' => [
-        '/^http:\/\/localhost:\d+$/', // Flutter Web dev, tous les ports locaux
-        '/^http:\/\/127\.0\.0\.1:\d+$/', // Localhost IP
-        '/^http:\/\/10\.0\.2\.2:\d+$/', // Android emulator
-        '/^http:\/\/192\.168\.\d+\.\d+:\d+$/', // Local network
+        '/http:\/\/localhost/', // Flutter Web dev, tous les ports locaux
+        '/http:\/\/127\.0\.0\.1/', // Localhost IP
+        '/http:\/\/10\.0\.2\.2/', // Android emulator
+        '/http:\/\/192\.168\.\d+\.\d+/', // Local network
     ],
 
     'allowed_headers' => ['*'],
