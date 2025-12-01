@@ -8,7 +8,7 @@ mkdir -p storage/framework/{cache,data,sessions,testing,views} \
     storage/framework/cache/data
 
 chmod -R 775 storage bootstrap/cache storage/logs
-chown -R laravel:laravel storage bootstrap/cache storage/logs
+chown -R laravel:laravel /var/www/html
 
 # Check required DB envs
 MISSING=0

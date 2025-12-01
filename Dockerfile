@@ -25,9 +25,7 @@ RUN mkdir -p storage/framework/{cache,data,sessions,testing,views} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
     && chown -R laravel:laravel /var/www/html \
-    && chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache
 
 
 
