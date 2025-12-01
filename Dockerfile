@@ -38,9 +38,9 @@ RUN mkdir -p /var/cache/nginx && chown -R laravel:laravel /var/log/nginx /var/ca
     && chown -R laravel:laravel /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Configure php-fpm to run as laravel user
-RUN sed -i 's/user = nobody/user = laravel/g' /etc/php8/php-fpm.d/www.conf && \
-    sed -i 's/group = nobody/group = laravel/g' /etc/php8/php-fpm.d/www.conf
+## Configure php-fpm à utiliser l'utilisateur laravel (chemin Alpine correct)
+RUN sed -i 's/user = nobody/user = laravel/g' /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's/group = nobody/group = laravel/g' /usr/local/etc/php-fpm.d/www.conf
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
