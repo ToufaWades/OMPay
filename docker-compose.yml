@@ -5,10 +5,12 @@ services:
     build: .
     image: ompay_app:latest
     container_name: ompay_app
+    environment:
+      PORT: 8000
     #env_file:
       #- .env.docker
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:${PORT:-8000}"
     volumes:
       - ./:/var/www/html:cached
     depends_on:
@@ -18,7 +20,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
-    command: ["/usr/local/bin/docker-entrypoint.sh", "php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+    command: ["/usr/local/bin/docker-entrypoint.sh", "sh", "-c", "php artisan serve --host=0.0.0.0 --port=$PORT"]
 
   db:
     image: postgres:15-alpine
