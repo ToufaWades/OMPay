@@ -1,16 +1,7 @@
 #!/bin/sh
+
+# Basic runtime sanity checks for required DB envs
 echo "Starting docker-entrypoint.sh"
-
-# Ensure storage & cache directories exist
-echo "Ensuring storage directories exist..."
-mkdir -p storage/framework/{cache,data,sessions,testing,views} \
-    storage/logs bootstrap/cache \
-    storage/framework/cache/data
-
-chmod -R 775 storage bootstrap/cache storage/logs
-chown -R laravel:laravel /var/www/html
-
-# Check required DB envs
 MISSING=0
 for v in DB_HOST DB_PORT DB_DATABASE DB_USERNAME; do
   eval val="\$$v"
@@ -21,39 +12,37 @@ for v in DB_HOST DB_PORT DB_DATABASE DB_USERNAME; do
 done
 
 if [ "$MISSING" -eq 1 ]; then
-  echo "Missing DB variables — exiting."
+  echo "One or more required DB env vars are missing. Aborting to avoid infinite wait." >&2
   exit 1
 fi
 
-# Generate APP_KEY if needed
+# Generate APP_KEY if not provided via env
 if [ -z "$APP_KEY" ]; then
   echo "APP_KEY not set — generating one"
   php artisan key:generate --force || true
 fi
 
-echo "Waiting for database..."
+echo "Waiting for database to be ready..."
 MAX_WAIT=120
 WAITED=0
 while ! pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME" >/dev/null 2>&1; do
   if [ "$WAITED" -ge "$MAX_WAIT" ]; then
-    echo "Timeout waiting for DB after ${MAX_WAIT}s" >&2
+    echo "Timeout waiting for database after ${MAX_WAIT}s" >&2
     exit 1
   fi
-  echo "DB not ready — sleep 1 (waited ${WAITED}s)"
+  echo "Database is unavailable - sleeping 1s (waited=${WAITED}s)"
   sleep 1
   WAITED=$((WAITED+1))
 done
 
-echo "DB is ready — running migrations"
+echo "Database is up - executing migrations"
+# Clear caches to avoid serving stale routes/config from image build
 php artisan route:clear || true
 php artisan config:clear || true
+php artisan cache:clear || true
+
+# Run migrations (non-blocking failure allowed)
 php artisan migrate --force || true
 
-echo "Starting PHP-FPM..."
-php-fpm -D
-
-echo "Ensuring nginx temp directories..."
-mkdir -p /tmp/nginx/client_body
-
-echo "Starting nginx..."
+echo "Starting Laravel application..."
 exec "$@"

@@ -1,48 +1,52 @@
+# Étape 1: Build des dépendances PHP
 FROM composer:2.6 AS composer-build
 
 WORKDIR /app
+
+# Copier les fichiers de dépendances
 COPY composer.json composer.lock ./
+
+# Installer les dépendances PHP sans scripts post-install
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
+
+# Étape 2: Image finale pour l'application
 FROM php:8.3-fpm-alpine
 
-# Install dependencies
-RUN apk add --no-cache postgresql-dev postgresql-client autoconf g++ make nginx \
+# Installer les dépendances système et extensions PHP nécessaires
+RUN apk add --no-cache postgresql-dev postgresql-client autoconf g++ make \
     && docker-php-ext-install pdo pdo_pgsql \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb
 
-# Add Laravel user
+# Créer un utilisateur non-root
 RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
 
+# Définir le répertoire de travail
 WORKDIR /var/www/html
 
+# Copier les dépendances installées depuis l'étape de build
 COPY --from=composer-build /app/vendor ./vendor
+
+# Copier le reste du code de l'application
 COPY . .
 
-# Create storage & cache directories **before switching user**
+# Créer les répertoires nécessaires et définir les permissions
 RUN mkdir -p storage/framework/{cache,data,sessions,testing,views} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
     && chown -R laravel:laravel /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-
-
-# Configure nginx
-COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir -p /var/cache/nginx && chown -R laravel:laravel /var/log/nginx /var/cache/nginx /run/nginx \
-    && mkdir -p /tmp/nginx/client_body && chown -R laravel:laravel /tmp/nginx \
-    && chown -R laravel:laravel /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-## Configure php-fpm à utiliser l'utilisateur laravel (chemin Alpine correct)
-RUN sed -i 's/user = nobody/user = laravel/g' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's/group = nobody/group = laravel/g' /usr/local/etc/php-fpm.d/www.conf
-
+# Copier le script d'entrée
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 80
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+# Passer à l'utilisateur non-root
+USER laravel
+
+# Exposer le port 8000
+EXPOSE 8000
+
+# Commande par défaut
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
